@@ -10,32 +10,58 @@ function App() {
   const [strokeColor, setStrokeColor] = useState<string>('#000000');
 
   useEffect(() => {
-    function drawRectangle() {
-      const ctx = canvasRef.current?.getContext('2d');
+    document.addEventListener('mousedown', (event) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
 
+      const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.lineTo(400.5, 0);
-      ctx.lineTo(400, 400);
-      ctx.lineTo(0, 400);
-      ctx.strokeStyle = strokeColor;
-      ctx.lineWidth = lineWidth;
-      ctx.closePath();
+      const { left: canvasLeft, top: canvasTop } =
+        canvas.getBoundingClientRect();
 
+      const [mouseX, mouseY] = [event.clientX, event.clientY];
+
+      ctx.moveTo(mouseX - canvasLeft, mouseY - canvasTop);
+    });
+
+    document.addEventListener('mouseup', (event) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const { left: canvasLeft, top: canvasTop } =
+        canvas.getBoundingClientRect();
+
+      const [mouseX, mouseY] = [event.clientX, event.clientY];
+
+      ctx.lineTo(mouseX - canvasLeft, mouseY - canvasTop);
       ctx.stroke();
-    }
+    });
 
-    drawRectangle();
+    return () => {
+      document.removeEventListener('mousedown', () => {});
+      document.removeEventListener('mouseup', () => {});
+    };
+  }, []);
+
+  useEffect(() => {
+    const ctx = canvasRef.current?.getContext('2d');
+    if (!ctx) return;
+
+    ctx.lineWidth = lineWidth;
+    ctx.strokeStyle = strokeColor;
   }, [lineWidth, strokeColor]);
+
   return (
     <main>
       <canvas
         ref={canvasRef}
         key={`${lineWidth}-${strokeColor}`}
-        width={400}
-        height={400}
+        width={1000}
+        height={1000}
       ></canvas>
       <input
         type="range"
