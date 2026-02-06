@@ -16,8 +16,8 @@ function App() {
       <canvas
         className="border border-gray-600 border-3"
         ref={canvasRef}
-        width={800}
-        height={800}
+        width={650}
+        height={650}
       ></canvas>
 
       <Toolbar canvasRef={canvasRef} />

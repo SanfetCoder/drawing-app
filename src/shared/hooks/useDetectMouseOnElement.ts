@@ -16,18 +16,21 @@ export function useDetectMouseOnElement(
     if (!canvas) return;
 
     const {
-      left: canvasLeft,
-      right: canvasRight,
-      top: canvasTop,
-      bottom: canvasBottom,
+      left: elementLeft,
+      right: elementRight,
+      top: elementTop,
+      bottom: elementBottom,
     } = canvas.getBoundingClientRect();
 
-    setIsMouseInsideElement(
-      canvasLeft <= mousePosition.x &&
-        mousePosition.x <= canvasRight &&
-        canvasTop <= mousePosition.y &&
-        canvasBottom >= mousePosition.y,
-    );
+    const mouseIsInHorizontalRange =
+      elementLeft <= mousePosition.x && mousePosition.x <= elementRight;
+
+    const mouseIsInVerticalRange =
+      elementTop <= mousePosition.y && elementBottom >= mousePosition.y;
+
+    const isInsideElement = mouseIsInHorizontalRange && mouseIsInVerticalRange;
+
+    setIsMouseInsideElement(isInsideElement);
   }, [mousePosition?.x, mousePosition?.y]);
 
   return isMouseInsideElement;
