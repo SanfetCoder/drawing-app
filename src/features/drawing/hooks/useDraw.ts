@@ -3,6 +3,14 @@ import { useMousePosition } from '../../../shared/hooks/useMousePosition';
 import { useDetectMouseClicked } from '../../../shared/hooks/useDetectMouseClicked';
 
 export function useDraw(canvasRef: RefObject<HTMLCanvasElement | null>) {
+  useDrawLineWhenMouseMoving(canvasRef);
+
+  useBeginNewPathWhenMouseLifted(canvasRef);
+}
+
+function useDrawLineWhenMouseMoving(
+  canvasRef: RefObject<HTMLCanvasElement | null>,
+) {
   const mousePosition = useMousePosition();
   const isMouseClicked = useDetectMouseClicked();
 
@@ -22,8 +30,6 @@ export function useDraw(canvasRef: RefObject<HTMLCanvasElement | null>) {
     ctx.lineTo(mouseX - canvasLeft, mouseY - canvasTop);
     ctx.stroke();
   }, [mousePosition?.x, mousePosition?.y, isMouseClicked]);
-
-  useBeginNewPathWhenMouseLifted(canvasRef);
 }
 
 function useBeginNewPathWhenMouseLifted(
