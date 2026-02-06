@@ -7,10 +7,7 @@ import {
 import { useDrawingStore } from '../stores/useDrawingStore';
 import { DRAW_MODES } from '../types/draw-mode.type';
 
-export function useDraw(
-  canvasRef: RefObject<HTMLCanvasElement | null>,
-  { lineWidth, strokeColor }: { lineWidth: number; strokeColor: string },
-) {
+export function useDraw(canvasRef: RefObject<HTMLCanvasElement | null>) {
   const isMouseClicked = useDetectMouseClicked();
   const mousePosition = useMousePosition();
 
@@ -18,7 +15,7 @@ export function useDraw(
 
   useBeginNewPathWhenMouseLifted(canvasRef, isMouseClicked);
 
-  useSetCanvasStyle(canvasRef, lineWidth, strokeColor);
+  useSetCanvasStyle(canvasRef);
 }
 
 function useDrawLineWhenMouseMoving(
@@ -66,11 +63,10 @@ function useBeginNewPathWhenMouseLifted(
   }, [isMouseClicked]);
 }
 
-function useSetCanvasStyle(
-  canvasRef: RefObject<HTMLCanvasElement | null>,
-  lineWidth: number,
-  strokeColor: string,
-) {
+function useSetCanvasStyle(canvasRef: RefObject<HTMLCanvasElement | null>) {
+  const lineWidth = useDrawingStore((state) => state.lineWidth);
+  const strokeColor = useDrawingStore((state) => state.strokeColor);
+
   useEffect(() => {
     const ctx = canvasRef.current?.getContext('2d');
     if (!ctx) return;
