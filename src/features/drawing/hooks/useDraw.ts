@@ -6,6 +6,7 @@ import {
 } from '../../../shared/hooks/useMousePosition';
 import { useDrawingStore } from '../stores/useDrawingStore';
 import { DRAW_MODES } from '../types/draw-mode.type';
+import { useDetectMouseOnElement } from '../../../shared/hooks/useDetectMouseOnElement';
 
 export function useDraw(canvasRef: RefObject<HTMLCanvasElement | null>) {
   const isMouseClicked = useDetectMouseClicked();
@@ -24,8 +25,15 @@ function useDrawLineWhenMouseMoving(
   mousePosition: MousePosition | null,
 ) {
   const drawMode = useDrawingStore((state) => state.drawMode);
+  const isMouseInsideCanvas = useDetectMouseOnElement(canvasRef);
+
   useEffect(() => {
-    if (!mousePosition || !isMouseClicked || drawMode !== DRAW_MODES.BRUSH)
+    if (
+      !mousePosition ||
+      !isMouseClicked ||
+      drawMode !== DRAW_MODES.BRUSH ||
+      !isMouseInsideCanvas
+    )
       return;
 
     const canvas = canvasRef.current;
