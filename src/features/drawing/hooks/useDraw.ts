@@ -1,9 +1,11 @@
 import { useEffect, type RefObject } from 'react';
+import { useDetectMouseClicked } from '../../../shared/hooks/useDetectMouseClicked';
 import {
   useMousePosition,
   type MousePosition,
 } from '../../../shared/hooks/useMousePosition';
-import { useDetectMouseClicked } from '../../../shared/hooks/useDetectMouseClicked';
+import { useDrawingStore } from '../stores/useDrawingStore';
+import { DRAW_MODES } from '../types/draw-mode.type';
 
 export function useDraw(
   canvasRef: RefObject<HTMLCanvasElement | null>,
@@ -24,8 +26,10 @@ function useDrawLineWhenMouseMoving(
   isMouseClicked: boolean,
   mousePosition: MousePosition | null,
 ) {
+  const drawMode = useDrawingStore((state) => state.drawMode);
   useEffect(() => {
-    if (!mousePosition || !isMouseClicked) return;
+    if (!mousePosition || !isMouseClicked || drawMode !== DRAW_MODES.BRUSH)
+      return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;

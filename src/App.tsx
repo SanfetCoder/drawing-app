@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import './App.css';
 import { useDraw } from './features/drawing/hooks/useDraw';
+import Toolbar from './features/drawing/components/Toolbar';
 
 const MINIMUM_LINE_WIDTH: number = 5;
 const MAXIMUM_LINE_WIDTH: number = 100;
@@ -39,6 +40,7 @@ function App() {
       />
       <h3>Line Width: {lineWidth}</h3>
       <button onClick={handleClearCanvas}>Clear Canvas</button>
+      <Toolbar />
     </main>
   );
 }
