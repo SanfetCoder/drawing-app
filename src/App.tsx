@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import './App.css';
 import { useDraw } from './features/drawing/hooks/useDraw';
 
-const MINIMUM_LINE_WIDTH: number = 10;
+const MINIMUM_LINE_WIDTH: number = 5;
 const MAXIMUM_LINE_WIDTH: number = 100;
 
 function App() {
@@ -11,6 +11,16 @@ function App() {
   const [strokeColor, setStrokeColor] = useState<string>('#000000');
 
   useDraw(canvasRef, { lineWidth, strokeColor });
+
+  function handleClearCanvas() {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
 
   return (
     <main>
@@ -28,6 +38,7 @@ function App() {
         onChange={(e) => setStrokeColor(e.target.value)}
       />
       <h3>Line Width: {lineWidth}</h3>
+      <button onClick={handleClearCanvas}>Clear Canvas</button>
     </main>
   );
 }
