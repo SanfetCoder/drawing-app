@@ -13,16 +13,6 @@ function App() {
 
   useDraw(canvasRef, { lineWidth, strokeColor });
 
-  function handleClearCanvas() {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
-
   return (
     <main>
       <canvas ref={canvasRef} width={500} height={500}></canvas>
@@ -39,8 +29,8 @@ function App() {
         onChange={(e) => setStrokeColor(e.target.value)}
       />
       <h3>Line Width: {lineWidth}</h3>
-      <button onClick={handleClearCanvas}>Clear Canvas</button>
-      <Toolbar />
+
+      <Toolbar canvasRef={canvasRef} />
     </main>
   );
 }
