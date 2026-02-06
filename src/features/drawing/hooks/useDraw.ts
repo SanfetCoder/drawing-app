@@ -2,17 +2,24 @@ import { useEffect, type RefObject } from 'react';
 import { useMousePosition } from '../../../shared/hooks/useMousePosition';
 import { useDetectMouseClicked } from '../../../shared/hooks/useDetectMouseClicked';
 
-export function useDraw(canvasRef: RefObject<HTMLCanvasElement | null>) {
-  useDrawLineWhenMouseMoving(canvasRef);
+export function useDraw(
+  canvasRef: RefObject<HTMLCanvasElement | null>,
+  { lineWidth, strokeColor }: { lineWidth: number; strokeColor: string },
+) {
+  const isMouseClicked = useDetectMouseClicked();
 
-  useBeginNewPathWhenMouseLifted(canvasRef);
+  useDrawLineWhenMouseMoving(canvasRef, isMouseClicked);
+
+  useBeginNewPathWhenMouseLifted(canvasRef, isMouseClicked);
+
+  useSetCanvasStyle(canvasRef, lineWidth, strokeColor);
 }
 
 function useDrawLineWhenMouseMoving(
   canvasRef: RefObject<HTMLCanvasElement | null>,
+  isMouseClicked: boolean,
 ) {
   const mousePosition = useMousePosition();
-  const isMouseClicked = useDetectMouseClicked();
 
   useEffect(() => {
     if (!mousePosition || !isMouseClicked) return;
@@ -34,9 +41,8 @@ function useDrawLineWhenMouseMoving(
 
 function useBeginNewPathWhenMouseLifted(
   canvasRef: RefObject<HTMLCanvasElement | null>,
+  isMouseClicked: boolean,
 ) {
-  const isMouseClicked = useDetectMouseClicked();
-
   useEffect(() => {
     const liftFingerOffMouse = !isMouseClicked;
 
@@ -50,4 +56,18 @@ function useBeginNewPathWhenMouseLifted(
       ctx.beginPath();
     }
   }, [isMouseClicked]);
+}
+
+function useSetCanvasStyle(
+  canvasRef: RefObject<HTMLCanvasElement | null>,
+  lineWidth: number,
+  strokeColor: string,
+) {
+  useEffect(() => {
+    const ctx = canvasRef.current?.getContext('2d');
+    if (!ctx) return;
+
+    ctx.lineWidth = lineWidth;
+    ctx.strokeStyle = strokeColor;
+  }, [lineWidth, strokeColor]);
 }

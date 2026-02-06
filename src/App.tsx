@@ -10,15 +10,7 @@ function App() {
   const [lineWidth, setLineWidth] = useState<number>(MINIMUM_LINE_WIDTH);
   const [strokeColor, setStrokeColor] = useState<string>('#000000');
 
-  useDraw(canvasRef);
-
-  useEffect(() => {
-    const ctx = canvasRef.current?.getContext('2d');
-    if (!ctx) return;
-
-    ctx.lineWidth = lineWidth;
-    ctx.strokeStyle = strokeColor;
-  }, [lineWidth, strokeColor]);
+  useDraw(canvasRef, { lineWidth, strokeColor });
 
   return (
     <main>
