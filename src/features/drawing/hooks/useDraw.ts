@@ -22,4 +22,26 @@ export function useDraw(canvasRef: RefObject<HTMLCanvasElement | null>) {
     ctx.lineTo(mouseX - canvasLeft, mouseY - canvasTop);
     ctx.stroke();
   }, [mousePosition?.x, mousePosition?.y, isMouseClicked]);
+
+  useBeginNewPathWhenMouseLifted(canvasRef);
+}
+
+function useBeginNewPathWhenMouseLifted(
+  canvasRef: RefObject<HTMLCanvasElement | null>,
+) {
+  const isMouseClicked = useDetectMouseClicked();
+
+  useEffect(() => {
+    const liftFingerOffMouse = !isMouseClicked;
+
+    if (liftFingerOffMouse) {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      ctx.beginPath();
+    }
+  }, [isMouseClicked]);
 }
