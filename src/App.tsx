@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './App.css';
+import { useMousePosition } from './shared/hooks/useMousePosition';
+import { useDetectMouseClicked } from './shared/hooks/useDetectMouseClicked';
 
 const MINIMUM_LINE_WIDTH: number = 10;
 const MAXIMUM_LINE_WIDTH: number = 100;
@@ -8,44 +10,25 @@ function App() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [lineWidth, setLineWidth] = useState<number>(MINIMUM_LINE_WIDTH);
   const [strokeColor, setStrokeColor] = useState<string>('#000000');
+  const isMouseClicked = useDetectMouseClicked();
+  const mousePosition = useMousePosition();
 
   useEffect(() => {
-    document.addEventListener('mousedown', (event) => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
+    if (!mousePosition || !isMouseClicked) return;
 
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-      const { left: canvasLeft, top: canvasTop } =
-        canvas.getBoundingClientRect();
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-      const [mouseX, mouseY] = [event.clientX, event.clientY];
+    const { left: canvasLeft, top: canvasTop } = canvas.getBoundingClientRect();
 
-      ctx.moveTo(mouseX - canvasLeft, mouseY - canvasTop);
-    });
+    const [mouseX, mouseY] = [mousePosition.x, mousePosition.y];
 
-    document.addEventListener('mouseup', (event) => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-
-      const { left: canvasLeft, top: canvasTop } =
-        canvas.getBoundingClientRect();
-
-      const [mouseX, mouseY] = [event.clientX, event.clientY];
-
-      ctx.lineTo(mouseX - canvasLeft, mouseY - canvasTop);
-      ctx.stroke();
-    });
-
-    return () => {
-      document.removeEventListener('mousedown', () => {});
-      document.removeEventListener('mouseup', () => {});
-    };
-  }, []);
+    ctx.lineTo(mouseX - canvasLeft, mouseY - canvasTop);
+    ctx.stroke();
+  }, [mousePosition?.x, mousePosition?.y, isMouseClicked]);
 
   useEffect(() => {
     const ctx = canvasRef.current?.getContext('2d');
@@ -57,12 +40,7 @@ function App() {
 
   return (
     <main>
-      <canvas
-        ref={canvasRef}
-        key={`${lineWidth}-${strokeColor}`}
-        width={1000}
-        height={1000}
-      ></canvas>
+      <canvas ref={canvasRef} width={500} height={500}></canvas>
       <input
         type="range"
         min={MINIMUM_LINE_WIDTH}
@@ -76,6 +54,7 @@ function App() {
         onChange={(e) => setStrokeColor(e.target.value)}
       />
       <h3>Line Width: {lineWidth}</h3>
+      <h3>{isMouseClicked ? 'clicked' : 'released'}</h3>
     </main>
   );
 }
