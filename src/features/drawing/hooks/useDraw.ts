@@ -17,13 +17,6 @@ export function useDraw(
   useBeginNewPathWhenMouseLifted(canvasRef, isMouseClicked);
 
   useSetCanvasStyle(canvasRef, lineWidth, strokeColor);
-
-  useDrawLineWhenMousePressed(
-    canvasRef,
-    lineWidth,
-    isMouseClicked,
-    mousePosition,
-  );
 }
 
 function useDrawLineWhenMouseMoving(
@@ -45,6 +38,7 @@ function useDrawLineWhenMouseMoving(
     const [mouseX, mouseY] = [mousePosition.x, mousePosition.y];
 
     ctx.lineTo(mouseX - canvasLeft, mouseY - canvasTop);
+    ctx.lineCap = 'round';
     ctx.stroke();
   }, [mousePosition?.x, mousePosition?.y, isMouseClicked]);
 }
@@ -79,32 +73,6 @@ function useSetCanvasStyle(
 
     ctx.lineWidth = lineWidth;
     ctx.strokeStyle = strokeColor;
+    ctx.lineCap = 'round';
   }, [lineWidth, strokeColor]);
-}
-
-function useDrawLineWhenMousePressed(
-  canvasRef: RefObject<HTMLCanvasElement | null>,
-  lineWidth: number,
-  isMouseClicked: boolean,
-  mousePosition: MousePosition | null,
-) {
-  useEffect(() => {
-    if (!mousePosition || !isMouseClicked) return;
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const { left: canvasLeft, top: canvasTop } = canvas.getBoundingClientRect();
-
-    ctx.rect(
-      mousePosition.x - canvasLeft,
-      mousePosition.y - canvasTop,
-      lineWidth,
-      lineWidth,
-    );
-    ctx.fill();
-  }, [mousePosition?.x, mousePosition?.y, isMouseClicked, lineWidth]);
 }
